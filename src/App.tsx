@@ -2,20 +2,15 @@ import React, {useEffect, useRef, useState} from 'react';
 import './App.css';
 import {Input} from "./components/Input";
 import {Button} from "./components/Button";
+import {Todos, TodosType} from "./components/Todos";
 
-type TodosType = {
-    completed: boolean
-    id: number
-    title: string
-    userId: number
-}
 
 function App() {
 
 
     const [todos, setTodos] = useState<TodosType[]>([])
-    // const [title, setTitle] = useState('')
-    const title = useRef<HTMLInputElement>(null)
+
+    // const title = useRef<HTMLInputElement>(null)
     console.log(todos)
 
     const fetchFoo = () => {
@@ -28,35 +23,31 @@ function App() {
         fetchFoo()
     }, [])
 
-    const todosForRender = todos.map(t => {
-        return (
-            <li key={t.id}>
-                <input type="checkbox" checked={t.completed}/>
-                <span><b>Id:</b> {t.id} </span>
-                <span><b>UserId:</b> {t.userId} </span>
-                <span><b>Title:</b> {t.title}</span>
-            </li>
-        )
-    })
+    // const todosForRender = todos.map(t => {
+    //     return (
+    //         <li key={t.id}>
+    //             <input type="checkbox" checked={t.completed}/>
+    //             <span><b>Id:</b> {t.id} </span>
+    //             <span><b>UserId:</b> {t.userId} </span>
+    //             <span><b>Title:</b> {t.title}</span>
+    //         </li>
+    //     )
+    // })
     const onClickHandler = () => {
         fetchFoo()
     }
     const hideMeHandler = () => {
         setTodos([])
     }
-    const addTodos = () => {
-        if (title.current) {
-            const newTodos: TodosType = {
-                completed: false,
-                id: todos.length + 1,
-                // title: title,
-                title: title.current.value,
-                userId: Math.ceil((todos.length + 1) / 20)
-            }
-            setTodos([...todos, newTodos])
-            // setTitle('')
-            title.current.value = ''
+    const addTodos = (title: string) => {
+
+        const newTodos: TodosType = {
+            completed: false,
+            id: todos.length + 1,
+            title,
+            userId: Math.ceil((todos.length + 1) / 20)
         }
+        setTodos([...todos, newTodos])
 
     }
     return (
@@ -65,13 +56,14 @@ function App() {
                 <button onClick={onClickHandler}>Show me</button>
                 <button onClick={hideMeHandler}>Hide me</button>
             </div>
-            <div>
-                <Input title={title} />
-                <Button name="+" onClick={addTodos}/>
-            </div>
-            <ul>
-                {todosForRender}
-            </ul>
+            <Todos todos={todos} addTodos={addTodos}/>
+            {/*<div>*/}
+            {/*    <Input title={title} />*/}
+            {/*    <Button name="+" onClick={addTodos}/>*/}
+            {/*</div>*/}
+            {/*<ul>*/}
+            {/*    {todosForRender}*/}
+            {/*</ul>*/}
         </div>
     );
 }
