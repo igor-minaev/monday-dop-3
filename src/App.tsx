@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './App.css';
 import {Input} from "./components/Input";
 import {Button} from "./components/Button";
@@ -14,7 +14,9 @@ function App() {
 
 
     const [todos, setTodos] = useState<TodosType[]>([])
-    const [title, setTitle] = useState('')
+    // const [title, setTitle] = useState('')
+    const title = useRef<HTMLInputElement>(null)
+    console.log(todos)
 
     const fetchFoo = () => {
         fetch('https://jsonplaceholder.typicode.com/todos')
@@ -28,7 +30,7 @@ function App() {
 
     const todosForRender = todos.map(t => {
         return (
-            <li>
+            <li key={t.id}>
                 <input type="checkbox" checked={t.completed}/>
                 <span><b>Id:</b> {t.id} </span>
                 <span><b>UserId:</b> {t.userId} </span>
@@ -43,14 +45,19 @@ function App() {
         setTodos([])
     }
     const addTodos = () => {
-        const newTodos: TodosType = {
-            completed: false,
-            id: todos.length + 1,
-            title: title,
-            userId: Math.ceil((todos.length + 1) / 20)
+        if (title.current) {
+            const newTodos: TodosType = {
+                completed: false,
+                id: todos.length + 1,
+                // title: title,
+                title: title.current.value,
+                userId: Math.ceil((todos.length + 1) / 20)
+            }
+            setTodos([...todos, newTodos])
+            // setTitle('')
+            title.current.value = ''
         }
-        setTodos([...todos, newTodos])
-        setTitle('')
+
     }
     return (
         <div className="App">
@@ -59,7 +66,7 @@ function App() {
                 <button onClick={hideMeHandler}>Hide me</button>
             </div>
             <div>
-                <Input title={title} setTitle={setTitle}/>
+                <Input title={title} />
                 <Button name="+" onClick={addTodos}/>
             </div>
             <ul>
